@@ -1,0 +1,25 @@
+[package]
+name = "invoxa-workflows"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+invoxa-database = { path = "../database" }
+invoxa-domain = { path = "../domain" }
+invoxa-documents = { path = "../documents" }
+invoxa-extraction = { path = "../extraction" }
+invoxa-integrations = { path = "../integrations" }
+invoxa-security = { path = "../security" }
+async-trait.workspace = true
+chrono.workspace = true
+rand.workspace = true
+rust_decimal.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+sqlx.workspace = true
+tempfile.workspace = true
+thiserror.workspace = true
+tokio.workspace = true
+tracing.workspace = true
+uuid.workspace = true

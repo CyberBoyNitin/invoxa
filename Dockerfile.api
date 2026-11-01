@@ -1,0 +1,41 @@
+# Build the Rust API, worker, and seed binaries.
+# Build from the repository root: docker build -f Dockerfile.api -t invoxa-api .
+FROM rust:1.98-bookworm AS builder
+
+WORKDIR /build
+COPY Cargo.toml Cargo.lock rust-toolchain.toml ./
+COPY apps ./apps
+COPY crates ./crates
+COPY migrations ./migrations
+
+RUN cargo build --locked --release -p invoxa-api \
+      --bin invoxa-api --bin invoxa-worker --bin invoxa-seed
+
+FROM debian:bookworm-slim AS runtime
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+       ca-certificates curl tesseract-ocr tesseract-ocr-eng \
+    && rm -rf /var/lib/apt/lists/* \
+    && groupadd --gid 10001 invoxa \
+    && useradd --uid 10001 --gid invoxa --create-home --shell /usr/sbin/nologin invoxa \
+    && mkdir -p /data/storage \
+    && chown -R invoxa:invoxa /data
+
+COPY --from=builder /build/target/release/invoxa-api /usr/local/bin/invoxa-api
+COPY --from=builder /build/target/release/invoxa-worker /usr/local/bin/invoxa-worker
+COPY --from=builder /build/target/release/invoxa-seed /usr/local/bin/invoxa-seed
+
+ENV BIND_ADDR=0.0.0.0:8080 \
+    STORAGE_ROOT=/data/storage \
+    TESSERACT_PATH=/usr/bin/tesseract \
+    RUST_LOG=info
+
+USER invoxa
+EXPOSE 8080
+VOLUME ["/data"]
+
+HEALTHCHECK --interval=15s --timeout=5s --start-period=20s --retries=5 \
+  CMD curl -fsS http://127.0.0.1:8080/health/ready || exit 1
+
+CMD ["invoxa-api"]

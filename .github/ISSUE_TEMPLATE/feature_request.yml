@@ -1,0 +1,50 @@
+name: Feature request
+description: Propose a focused improvement to Invoxa.
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What user or operator problem does this solve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: Describe the behavior and any alternatives considered.
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Authentication / tenancy
+        - Upload / OCR / extraction
+        - Review / approval
+        - Exports
+        - API keys
+        - Webhooks
+        - Frontend
+        - Deployment / Docker
+        - Documentation
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: risks
+    attributes:
+      label: Security, privacy, or accounting impact
+      description: Note any effect on tenant isolation, approval policy, money accuracy, or data retention.
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checklist
+      options:
+        - label: I searched existing issues and documentation first.
+          required: true
+        - label: This request does not ask to bypass explicit human approval.
+          required: true

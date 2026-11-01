@@ -1,0 +1,25 @@
+# Production overrides for docker-compose.yml.
+#
+#   cp .env.docker.example .env.docker
+#   # Set APP_URL=https://..., APP_ENV=production, and real AI provider settings.
+#   docker compose --env-file .env.docker \
+#     -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+#
+# Terminate TLS at a trusted reverse proxy/load balancer in front of the web
+# service. Set TRUST_PROXY=true only when that proxy overwrites forwarded
+# headers. Do not enable ALLOW_MOCK_AI for real accounting data.
+services:
+  api:
+    environment:
+      APP_ENV: production
+      COOKIE_SECURE: "true"
+      TRUST_PROXY: "true"
+      EXPOSE_DEV_TOKENS: "false"
+      ALLOW_MOCK_AI: ${ALLOW_MOCK_AI:-false}
+  worker:
+    environment:
+      APP_ENV: production
+      ALLOW_MOCK_AI: ${ALLOW_MOCK_AI:-false}
+  web:
+    environment:
+      NODE_ENV: production

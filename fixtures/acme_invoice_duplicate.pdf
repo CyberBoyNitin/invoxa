@@ -1,0 +1,60 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+5 0 obj
+<< /Length 725 >>
+stream
+BT
+/F1 11 Tf
+50 760 Td
+15 TL
+(TAX INVOICE) Tj T*
+(Acme Cloud Services Pvt Ltd) Tj T*
+(Vendor: Acme Cloud Services Pvt Ltd) Tj T*
+(GSTIN: 29AABCA1234F1Z5) Tj T*
+(Email: billing@acme-cloud.example) Tj T*
+(Invoice Number: INV-2026-0042) Tj T*
+(Invoice Date: 2026-10-01) Tj T*
+(Due Date: 2026-10-31) Tj T*
+(Currency: INR) Tj T*
+(Purchase Order: PO-7781) Tj T*
+(Payment Terms: Net 30) Tj T*
+() Tj T*
+(Description Qty Unit Price Amount) Tj T*
+(Cloud hosting 1 15000.00 15000.00) Tj T*
+(Support plan 2 2500.00 5000.00) Tj T*
+() Tj T*
+(Subtotal: 20000.00) Tj T*
+(CGST 9% 1800.00) Tj T*
+(SGST 9% 1800.00) Tj T*
+(Tax Total: 3600.00) Tj T*
+(Total: 23600.00) Tj T*
+(Balance Due: 23600.00) Tj T*
+(Duplicate demo copy - synthetic) Tj T*
+ET
+endstream
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000247 00000 n 
+0000000317 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+1093
+%%EOF

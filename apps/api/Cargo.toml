@@ -1,0 +1,60 @@
+[package]
+name = "invoxa-api"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[lib]
+name = "invoxa_api"
+path = "src/lib.rs"
+
+[[bin]]
+name = "invoxa-api"
+path = "src/main.rs"
+
+[[bin]]
+name = "invoxa-worker"
+path = "src/bin/worker.rs"
+
+[[bin]]
+name = "invoxa-seed"
+path = "src/bin/seed.rs"
+
+[dependencies]
+invoxa-database = { path = "../../crates/database" }
+invoxa-domain = { path = "../../crates/domain" }
+invoxa-documents = { path = "../../crates/documents" }
+invoxa-extraction = { path = "../../crates/extraction" }
+invoxa-integrations = { path = "../../crates/integrations" }
+invoxa-security = { path = "../../crates/security" }
+invoxa-workflows = { path = "../../crates/workflows" }
+anyhow.workspace = true
+axum.workspace = true
+base64.workspace = true
+bytes.workspace = true
+chrono.workspace = true
+dotenvy.workspace = true
+futures.workspace = true
+hmac.workspace = true
+mime.workspace = true
+rand.workspace = true
+reqwest.workspace = true
+rust_decimal.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+sha2.workspace = true
+sqlx.workspace = true
+tempfile.workspace = true
+thiserror.workspace = true
+tokio.workspace = true
+tower.workspace = true
+tower-http.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true
+url.workspace = true
+uuid.workspace = true
+
+[dev-dependencies]
+axum-test = "21"
+http-body-util = "0.1"
+mime.workspace = true

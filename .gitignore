@@ -1,0 +1,37 @@
+# Rust
+/target
+**/*.rs.bk
+
+# Node
+node_modules/
+.next/
+out/
+.turbo/
+
+# Environment and local state
+.env
+.env.*
+!.env.example
+!.env.docker.example
+.local/
+data/
+storage/
+*.log
+
+# Test artifacts
+test-results/
+playwright-report/
+blob-report/
+coverage/
+
+# Internal build brief
+prompt.txt
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# TypeScript incremental build cache
+*.tsbuildinfo

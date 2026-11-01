@@ -1,0 +1,113 @@
+# Local/staging Docker Compose stack. For production, terminate TLS at a
+# reverse proxy and follow docs/DEPLOYMENT.md.
+#
+#   cp .env.docker.example .env.docker
+#   docker compose --env-file .env.docker up --build
+#
+# The API runs migrations on startup. The worker uses the same image.
+services:
+  db:
+    image: postgres:17
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: invoxa
+      POSTGRES_USER: invoxa
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env.docker}
+    volumes:
+      - invoxa_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U invoxa -d invoxa"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  api:
+    image: invoxa-api:local
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    restart: unless-stopped
+    environment:
+      APP_ENV: ${APP_ENV:-development}
+      APP_URL: ${APP_URL:-http://localhost:3000}
+      BIND_ADDR: 0.0.0.0:8080
+      ALLOWED_ORIGINS: ${APP_URL:-http://localhost:3000}
+      DATABASE_URL: postgres://invoxa:${POSTGRES_PASSWORD}@db:5432/invoxa
+      DATABASE_MAX_CONNECTIONS: ${DATABASE_MAX_CONNECTIONS:-20}
+      STORAGE_ROOT: /data/storage
+      COOKIE_SECURE: ${COOKIE_SECURE:-false}
+      TRUST_PROXY: ${TRUST_PROXY:-false}
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY:?set ENCRYPTION_KEY in .env.docker}
+      CSRF_SECRET: ${CSRF_SECRET:?set CSRF_SECRET in .env.docker}
+      DOWNLOAD_SIGNING_KEY: ${DOWNLOAD_SIGNING_KEY:-}
+      AI_PROVIDER: ${AI_PROVIDER:-mock}
+      ALLOW_MOCK_AI: ${ALLOW_MOCK_AI:-true}
+      EXPOSE_DEV_TOKENS: "false"
+      TESSERACT_PATH: /usr/bin/tesseract
+      OCR_LANGUAGE: ${OCR_LANGUAGE:-eng}
+      WEBHOOK_ALLOW_HTTP: "false"
+      WORKER_POLL_SECONDS: ${WORKER_POLL_SECONDS:-2}
+      WORKER_LEASE_SECONDS: ${WORKER_LEASE_SECONDS:-120}
+      WORKER_CONCURRENCY: ${WORKER_CONCURRENCY:-2}
+      # Optional external AI settings:
+      AI_BASE_URL: ${AI_BASE_URL:-}
+      AI_MODEL: ${AI_MODEL:-}
+      AI_API_KEY: ${AI_API_KEY:-}
+    volumes:
+      - invoxa_storage:/data
+    ports:
+      - "${API_PORT:-8080}:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  worker:
+    image: invoxa-api:local
+    restart: unless-stopped
+    command: ["invoxa-worker"]
+    environment:
+      APP_ENV: ${APP_ENV:-development}
+      APP_URL: ${APP_URL:-http://localhost:3000}
+      DATABASE_URL: postgres://invoxa:${POSTGRES_PASSWORD}@db:5432/invoxa
+      DATABASE_MAX_CONNECTIONS: ${DATABASE_MAX_CONNECTIONS:-20}
+      STORAGE_ROOT: /data/storage
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY:?set ENCRYPTION_KEY in .env.docker}
+      CSRF_SECRET: ${CSRF_SECRET:?set CSRF_SECRET in .env.docker}
+      DOWNLOAD_SIGNING_KEY: ${DOWNLOAD_SIGNING_KEY:-}
+      AI_PROVIDER: ${AI_PROVIDER:-mock}
+      ALLOW_MOCK_AI: ${ALLOW_MOCK_AI:-true}
+      TESSERACT_PATH: /usr/bin/tesseract
+      OCR_LANGUAGE: ${OCR_LANGUAGE:-eng}
+      WORKER_POLL_SECONDS: ${WORKER_POLL_SECONDS:-2}
+      WORKER_LEASE_SECONDS: ${WORKER_LEASE_SECONDS:-120}
+      WORKER_CONCURRENCY: ${WORKER_CONCURRENCY:-2}
+      AI_BASE_URL: ${AI_BASE_URL:-}
+      AI_MODEL: ${AI_MODEL:-}
+      AI_API_KEY: ${AI_API_KEY:-}
+    volumes:
+      - invoxa_storage:/data
+    healthcheck:
+      disable: true
+    depends_on:
+      db:
+        condition: service_healthy
+
+  web:
+    image: invoxa-web:local
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+      args:
+        INVOXA_API_URL: http://api:8080
+    restart: unless-stopped
+    environment:
+      INVOXA_API_URL: http://api:8080
+    ports:
+      - "${WEB_PORT:-3000}:3000"
+    depends_on:
+      api:
+        condition: service_healthy
+
+volumes:
+  invoxa_pgdata:
+  invoxa_storage:

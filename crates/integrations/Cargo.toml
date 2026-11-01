@@ -1,0 +1,23 @@
+[package]
+name = "invoxa-integrations"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+invoxa-domain = { path = "../domain" }
+invoxa-security = { path = "../security" }
+chrono.workspace = true
+csv.workspace = true
+ipnet.workspace = true
+reqwest.workspace = true
+rust_decimal.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+tokio.workspace = true
+url.workspace = true
+uuid.workspace = true
+hmac.workspace = true
+sha2.workspace = true
+hex.workspace = true

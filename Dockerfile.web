@@ -1,0 +1,37 @@
+# Build and run the Next.js frontend.
+# Build from the repository root: docker build -f Dockerfile.web -t invoxa-web .
+FROM node:24-bookworm-slim AS deps
+WORKDIR /app
+COPY apps/web/package.json apps/web/package-lock.json ./
+COPY apps/web/scripts ./scripts
+RUN npm ci
+
+FROM node:24-bookworm-slim AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY apps/web ./
+ARG INVOXA_API_URL=http://api:8080
+ENV INVOXA_API_URL=$INVOXA_API_URL \
+    NEXT_TELEMETRY_DISABLED=1
+RUN node scripts/copy-pdf-worker.mjs
+RUN npm run build
+
+FROM node:24-bookworm-slim AS runtime
+WORKDIR /app
+ENV NODE_ENV=production \
+    NEXT_TELEMETRY_DISABLED=1 \
+    INVOXA_API_URL=http://api:8080
+
+COPY --from=builder /app/package.json /app/package-lock.json ./
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/next.config.ts ./next.config.ts
+COPY --from=builder /app/tsconfig.json ./tsconfig.json
+COPY --from=builder /app/next-env.d.ts ./next-env.d.ts
+
+RUN mkdir -p /app/.next/cache && chown -R node:node /app
+USER node
+EXPOSE 3000
+
+CMD ["npm", "run", "start"]
